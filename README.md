@@ -4,7 +4,13 @@
 
 ## インストール
 
-配布ZIPの `image-grid-captions` フォルダを Vault の `.obsidian/plugins/` に配置します。中に `main.js`、`manifest.json`、`styles.css` があることを確認し、Obsidianを再読み込みして「設定 → コミュニティプラグイン」で有効にしてください。
+1. [GitHub Releases](https://github.com/hyodoarch/obsidian-image-grid-captions/releases/latest) の Assets から、最新版の `image-grid-captions-x.x.x.zip` をダウンロードします（v0.1.0 は `image-grid-captions-0.1.0.zip`）。
+2. ZIPを展開します。
+3. 展開された `image-grid-captions` フォルダを Vault の `.obsidian/plugins/` に配置します。フォルダ内に `main.js`、`manifest.json`、`styles.css` があることを確認してください。
+4. Obsidianを再読み込みします。
+5. 「設定 → コミュニティプラグイン → Image Grid Captions」を有効にします。
+
+GitHubの「Code → Download ZIP」や Releases の「Source code (zip)」「Source code (tar.gz)」はソースコードであり、そのままインストールできる配布ZIPではありません。
 
 ソースから作成する場合（Node.js 22以降）:
 
