@@ -71,8 +71,31 @@ try {
   });
   await page.waitForFunction(() => document.querySelector('[role="alert"]')?.textContent.includes("unreadable"));
   assert.equal(await page.locator("img").count(), 0);
+  // Headings use real DOM elements; untrusted caption content remains text.
+  await page.evaluate(() => {
+    window.cleanup();
+    const source = "columns: 4\n![[a.svg|## 店舗入口 <img src=x onerror=alert(1)>\n入口の説明文です。\n\n二つ目の段落です。\n]]\n![[b.svg|### 材料と仕上げの長い見出しを折り返して表示します\n<em>本文もHTMLにしません。</em>\n]]\n![[c.svg|\\## 記号のまま]]\n![[d.svg]]";
+    const img = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200"><rect width="300" height="200" fill="#376b86"/></svg>');
+    window.cleanup = GridTest.mountGrid(GridTest.renderGrid(document.getElementById("host"), GridTest.parseGrid(source), [img, img, img, img]));
+  });
+  await page.waitForSelector('.image-grid-captions[data-ready]');
+  assert.equal(await page.locator('figcaption h2').count(), 1);
+  assert.equal(await page.locator('figcaption h3').count(), 1);
+  assert.equal(await page.locator('figcaption img, figcaption script').count(), 0);
+  assert.equal(await page.locator('figcaption').count(), 3);
+  assert.equal(await page.locator('figcaption').nth(2).textContent(), '## 記号のまま');
+  assert.equal(await page.locator('.image-grid-captions__image').first().getAttribute('alt'), '店舗入口 <img src=x onerror=alert(1)> 入口の説明文です。 二つ目の段落です。');
+  assert.equal(await page.locator('figcaption p').count(), 3);
+  assert.equal(await page.locator('figcaption em').count(), 0);
+  for (const width of [800, 320]) {
+    await page.locator('#host').evaluate((el, w) => { el.style.width = `${w}px`; }, width);
+    await page.waitForFunction(w => Math.abs(document.querySelector('.image-grid-captions__image').getBoundingClientRect().width - (w - 24) / 4) < 0.2, width);
+    const overflow = await page.locator('figcaption').evaluateAll(captions => captions.some(el => el.scrollWidth > el.clientWidth + 1));
+    assert.equal(overflow, false, `caption heading overflow at ${width}px`);
+    await page.screenshot({ path: `test-results/headings-${width}.png`, fullPage: true });
+  }
   assert.deepEqual(errors, []);
-  const report = { passed: true, layoutCases: checked, checks: ["equal height", "aspect ratio", "gap", "one row", "resize", "caption wrapping", "light/dark screenshots", "narrow width recovery", "broken image isolation"] };
+  const report = { passed: true, layoutCases: checked, checks: ["equal height", "aspect ratio", "gap", "one row", "resize", "caption wrapping", "light/dark screenshots", "narrow width recovery", "broken image isolation", "H2/H3 + paragraphs semantics and wrapping", "literal HTML and escaped headings", "captionless image"] };
   await writeFile("test-results/browser-report.json", JSON.stringify(report, null, 2));
   console.log(JSON.stringify(report));
 } finally { await browser.close(); }

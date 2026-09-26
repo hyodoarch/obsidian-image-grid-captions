@@ -1,10 +1,10 @@
-# Image Grid Captions 0.1.0
+# Image Grid Captions 0.2.0
 
-縦横比が異なるローカル画像を、**高さを揃えて・切り取らずに1行表示**する Obsidian プラグインです。同じ記法を `quartz-image-grid-captions` でも利用できます。
+縦横比が異なるローカル画像を、**高さを揃えて・切り取らずに1行表示**する Obsidian プラグインです。通常キャプションの記法は `quartz-image-grid-captions` でも利用できます。0.2.0ではH2/H3見出し・複数行キャプション・段落に対応しました。Digital Garden側にも対応実装があります。Quartz版へのこの追加機能の反映は、このリリースの対象外です。
 
 ## インストール
 
-1. [GitHub Releases](https://github.com/hyodoarch/obsidian-image-grid-captions/releases/latest) の Assets から、最新版の `image-grid-captions-x.x.x.zip` をダウンロードします（v0.1.0 は `image-grid-captions-0.1.0.zip`）。
+1. [GitHub Releases](https://github.com/hyodoarch/obsidian-image-grid-captions/releases/latest) の Assets から、最新版の `image-grid-captions-x.x.x.zip` をダウンロードします（v0.2.0 は `image-grid-captions-0.2.0.zip`）。
 2. ZIPを展開します。
 3. 展開された `image-grid-captions` フォルダを Vault の `.obsidian/plugins/` に配置します。フォルダ内に `main.js`、`manifest.json`、`styles.css` があることを確認してください。
 4. Obsidianを再読み込みします。
@@ -37,13 +37,50 @@ gap: 8
 - 正式な識別子は **`image-grid-captions` のみ**です。元仕様に混在していた `image-grid` は既存プラグインと競合させないため登録しません。
 - `columns` は必須。`2`・`3`・`4` のいずれかで、画像数との一致が必要です。
 - `gap` は省略時 `8`。単位なしの非負整数で、pxとして扱います。
-- 画像は1行に1枚。`![[ファイル名]]` と `![[フォルダ/ファイル名|説明]]` が使えます。
-- キャプションはプレーンテキストです。Markdown・HTML・幅・位置指定は解釈せず、追加の `|` はエラーにします。折り返しによる複数行表示に対応します。
+- 画像はそれぞれ別の行から書きます。`![[ファイル名]]` と `![[フォルダ/ファイル名|説明]]` が使え、`|` の後のキャプションは複数行にもできます。
+- キャプション冒頭の `## ` / `### ` はH2/H3見出しになります。それ以外のMarkdown・HTML・幅・位置指定は解釈せず、追加の `|` はエラーにします。折り返しによる複数行表示に対応します。
 - キャプションなしの場合、altは拡張子を含むファイル名です。
 - 対象は png、jpg/jpeg、webp、gif、bmp、avif、svg。ブラウザが読み込める画像が必要です。GIF/SVG専用処理はありません。外部URL、動画、アンカー、絶対パスは対象外です。
 - 不明・重複パラメータ、画像数不一致、解決できない画像は該当ブロックだけをエラー表示します。
 
 `examples/` をVaultにコピーし、`examples/demo.md` をReading Viewで開くと、正常系とエラー系を確認できます。
+
+### キャプションの見出し
+
+````markdown
+```image-grid-captions
+columns: 2
+![[images/portrait.png|## 道路側外観]]
+![[images/landscape.png|### 材料と仕上げ]]
+```
+````
+
+`##` または `###` の後に半角スペース（またはタブ）を置きます。1行だけならキャプション全体が見出しになります。
+
+### 見出し＋段落を同じキャプションに書く
+
+````markdown
+```image-grid-captions
+columns: 2
+![[images/portrait.png|
+## 道路側外観
+南側から見た建物です。
+
+### 材料と仕上げ
+外壁には杉板を使っています。
+]]
+![[images/landscape.png|
+## 室内
+窓から自然光を取り込む空間です。
+
+空行で区切ると、次の段落になります。
+]]
+```
+````
+
+キャプションは `|` の後から閉じる `]]` までです。見出し行はH2/H3、それ以外の文章はPになります。空行で段落を分け、空行のない本文の改行は同じ段落内で表示します。見出しの次の本文には空行がなくても構いません。次の画像を書く前に必ず `]]` で閉じます。見出し・段落・通常の1行キャプション・キャプションなしを画像ごとに組み合わせられます。
+
+`\## 見出しにしない` / `\### 見出しにしない` と書くと、先頭のバックスラッシュを除き、記号をそのまま表示できます。`#`・`####`・空白のない `##外観` は従来どおり文字です。見出し・段落内の太字・リンク・HTMLも文字として表示します。画像altは見出し記号を除いた文章を連結します。見出しサイズはテーマを継承し、グリッド内の余白だけを調整します。
 
 ## レイアウトと対応範囲
 

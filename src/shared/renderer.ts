@@ -1,4 +1,4 @@
-import { errorText, type Grid } from "./parser";
+import { errorText, parseCaptionBlocks, type Grid } from "./parser";
 import { calculateLayout } from "./layout";
 
 export function showError(element: HTMLElement, error: unknown) {
@@ -25,7 +25,16 @@ export function renderGrid(host: HTMLElement, grid: Grid, sources: string[]): HT
     if (item.caption) {
       const caption = doc.createElement("figcaption");
       caption.className = "image-grid-captions__caption";
-      caption.textContent = item.caption;
+      const blocks = parseCaptionBlocks(item.caption);
+      for (const block of blocks) {
+        if (!block.headingLevel && !item.caption.includes("\n")) {
+          caption.append(doc.createTextNode(block.text));
+        } else {
+          const element = doc.createElement(block.headingLevel ? `h${block.headingLevel}` : "p");
+          element.textContent = block.text;
+          caption.append(element);
+        }
+      }
       figure.append(caption);
     }
     row.append(figure);

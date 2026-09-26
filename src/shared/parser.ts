@@ -6,22 +6,59 @@ export function errorText(error: unknown): string {
   return PREFIX + (error instanceof Error ? error.message : String(error));
 }
 
-/** One embed per line. Captions are plain text, never HTML or size directives. */
+/** Only a leading H2/H3 marker is interpreted; all other content stays literal. */
+export function parseCaption(value: string): { text: string; headingLevel: 2 | 3 | null } {
+  if (/^\\#{2,3}[ \t]+\S/.test(value)) return { text: value.slice(1), headingLevel: null };
+  const match = /^(#{2,3})[ \t]+(\S.*)$/.exec(value);
+  return match
+    ? { text: match[2], headingLevel: match[1].length as 2 | 3 }
+    : { text: value, headingLevel: null };
+}
+
+/** Headings start new blocks; blank lines separate paragraphs. No HTML parsing. */
+export function parseCaptionBlocks(value: string): ReturnType<typeof parseCaption>[] {
+  const blocks: ReturnType<typeof parseCaption>[] = [];
+  let paragraph: string[] = [];
+  const flush = () => {
+    if (paragraph.length) blocks.push({ text: paragraph.join("\n"), headingLevel: null });
+    paragraph = [];
+  };
+  for (const raw of value.split(/\r?\n/)) {
+    const line = raw.trim();
+    if (!line) { flush(); continue; }
+    const parsed = parseCaption(line);
+    if (parsed.headingLevel) { flush(); blocks.push(parsed); }
+    else paragraph.push(parsed.text);
+  }
+  flush();
+  return blocks;
+}
+
+/** Each embed starts on its own line; the caption after | can span lines. */
 export function parseGrid(source: string): Grid {
   const params = new Map<string, string>();
   const images: GridImage[] = [];
-  for (const raw of source.split(/\r?\n/)) {
-    const line = raw.trim();
+  const lines = source.split(/\r?\n/);
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i].trim();
     if (!line) continue;
-    if (line.startsWith("![[") && line.endsWith("]]")) {
+    if (line.startsWith("![[")) {
+      if (!line.endsWith("]]")) {
+        if (!line.includes("|")) throw new Error("A multiline image caption must start with ![[path|.");
+        while (!line.endsWith("]]")) {
+          if (++i >= lines.length || lines[i].trim().startsWith("![[")) throw new Error("Unclosed image caption: expected ]].");
+          line += "\n" + lines[i].trim();
+        }
+      }
       const parts = line.slice(3, -2).split("|");
       if (parts.length > 2) throw new Error("Additional image parameters are not supported.");
       const path = parts[0].trim();
       const caption = parts[1]?.trim() ?? "";
-      if (!path || /[:#?\[\]\\]/.test(path) || path.startsWith("/") || !/\.(png|jpe?g|webp|gif|bmp|avif|svg)$/i.test(path)) {
+      if (!path || /[:#?\[\]\\\r\n]/.test(path) || path.startsWith("/") || !/\.(png|jpe?g|webp|gif|bmp|avif|svg)$/i.test(path)) {
         throw new Error(`Unsupported local image path: ${path}`);
       }
-      images.push({ path, caption, alt: caption || path.split("/").pop()! });
+      const alt = parseCaptionBlocks(caption).map(block => block.text.replace(/\n/g, " ")).join(" ");
+      images.push({ path, caption, alt: alt || path.split("/").pop()! });
       continue;
     }
     const colon = line.indexOf(":");

@@ -2,13 +2,24 @@
 
 このファイルと `images/` を同じ階層に置いて使用してください。
 
-## 1. 横画像2枚
+## 1. 横画像2枚：H2・H3キャプション
 
 ```image-grid-captions
 columns: 2
 gap: 8
-![[images/landscape.png|横画像A]]
-![[images/landscape.png|横画像B]]
+![[images/landscape.png|
+## 横画像A
+見出しの下に段落が表示されます。
+
+### 材料と仕上げ
+小見出しと説明も同じキャプションに入れられます。
+]]
+![[images/landscape.png|
+### 横画像B
+こちらも通常の段落です。
+
+空行で区切った二つ目の段落です。
+]]
 ```
 
 ## 2. 縦＋横（gap省略）
@@ -53,7 +64,7 @@ gap: 0
 ```image-grid-captions
 columns: 2
 gap: 4
-![[images/portrait.png|4px]]
+![[images/portrait.png|\## 記号として表示]]
 ![[images/landscape.png]]
 ```
 

@@ -41,5 +41,14 @@
   overflow-wrap: anywhere;
   white-space: pre-wrap;
 }
+.image-grid-captions .image-grid-captions__caption > :is(h2, h3, p) {
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.image-grid-captions .image-grid-captions__caption > :is(h2, h3, p) + :is(h2, h3, p) {
+  margin-top: .4em;
+}
 .image-grid-captions__error { white-space: pre-wrap; overflow-wrap: anywhere; }
 .image-grid-captions > [hidden] { display: none; }

@@ -1,7 +1,7 @@
 {
   "id": "image-grid-captions",
   "name": "Image Grid Captions",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "minAppVersion": "1.5.0",
   "description": "Display local images in one uncropped row with equal image heights and individual captions.",
   "author": "hyodo",

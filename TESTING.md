@@ -1,5 +1,28 @@
 # 検証記録
 
+## 2026-09-26：0.2.0公開前検証
+
+- Windows / Node.js 24.18.0 / Microsoft Edge headless。
+- `npm run check`：型検査・ビルド・61テスト成功。
+- `npm run test:browser`：64レイアウトケース、H2/H3と段落、折り返し、HTMLの文字表示、見出しエスケープ、キャプションなしの検証成功。
+- 配布ZIPは `python tools/build_zip.py` で生成し、ビルド済みmain.js・manifest.json・styles.cssを含める。
+- Obsidian実アプリ・モバイル実機・Quartz版の今回の再検証は未実施。
+
+以下のローカル開発版の記録は過去の作業履歴です。
+
+## 2026-09-24：0.2.0ローカル開発版
+
+- `npm run check`：型検査・ビルド・61テスト成功。
+- `npm run test:browser`：既存64レイアウトケースと、H2/H3＋P、段落分割、キャプションなし、HTMLの文字表示、見出しエスケープ、800px/320pxの折り返しを確認。
+- Digital Garden側：17ファイル433テスト成功。実際のMarkdown→link/taggify→画像最適化の変換を含む。
+- Digital Garden生成ページ：1366px/390pxの画面幅で2/3/4列、同じ画像高さ、縦横比維持、キャプションの横溢れなし、拡大表示とEscでの終了を確認。
+- Vaultの `.obsidian/plugins/image-grid-captions` にビルド済みファイルをコピーし、元ファイルとのハッシュ一致を確認。旧0.1.0は `release/backup-0.1.0-20260924/` に退避。
+- 配布用ローカルZIP：`release/image-grid-captions-0.2.0-local.zip`。GitHubへは未公開。
+
+今回もObsidian実アプリ・iOS/Android実機は未検証です。Obsidianでプラグインを再読み込みし、Vaultの `_メモ置場/Image Grid Captions 見出しと段落の確認.md` を閲覧モードで確認できます。
+
+以下は旧版の記録です。
+
 実施日: 2026-09-05 / Windows / Node.js 24.16.0 / Microsoft Edge headless。
 
 - parser/layout: 40テスト。columns 2/3/4、gap 0/4/8/20、既定値、未知・重複パラメータ、不正値、画像数不一致、外部URL・拡張指定の拒否。
