@@ -1,2 +1,4 @@
 export { mountGrid, renderGrid } from "../src/shared/renderer";
 export { parseGrid } from "../src/shared/parser";
+
+export { attachControls, openLightbox } from "../src/controls";

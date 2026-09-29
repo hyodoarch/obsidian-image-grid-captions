@@ -52,3 +52,49 @@
 }
 .image-grid-captions__error { white-space: pre-wrap; overflow-wrap: anywhere; }
 .image-grid-captions > [hidden] { display: none; }
+
+/* Obsidian Live Preview controls; website/shared renderer stays unchanged. */
+.markdown-source-view .image-grid-captions__item { position: relative; }
+.igc-image-actions {
+  position: absolute; top: 8px; right: 8px; z-index: 2;
+  display: flex; gap: var(--size-2-1, 2px);
+  padding: var(--embed-actions-padding, 2px);
+  background-color: var(--embed-actions-background, rgba(255,255,255,.8));
+  backdrop-filter: var(--embed-actions-blur, blur(6px));
+  border-radius: var(--embed-actions-radius, 6px);
+  box-shadow: var(--embed-actions-shadow, 0 1px 6px #0002);
+  opacity: 0; pointer-events: none; transition: opacity 70ms ease-out;
+}
+.image-grid-captions__item:hover > .igc-image-actions,
+.image-grid-captions__item:focus-within > .igc-image-actions {
+  opacity: 1; pointer-events: auto;
+}
+.markdown-source-view .cm-embed-block.igc-has-controls > .embed-actions { display: none; }
+@media (hover: none) { .igc-image-actions { opacity: 1; pointer-events: auto; } }
+.igc-lightbox {
+  position: fixed; inset: 0; z-index: var(--layer-modal, 1000);
+  background: color-mix(in srgb, var(--lightbox-background, #000) 90%, transparent);
+}
+.igc-lightbox__stage {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  overflow: hidden; touch-action: none;
+}
+.igc-lightbox__stage > img {
+  display: block; width: auto; height: auto; max-width: 100%; max-height: 100%;
+  padding: 8px; box-sizing: border-box; object-fit: contain; user-select: none;
+}
+.igc-lightbox.is-zoomed img { cursor: grab; }
+.igc-lightbox.is-zoomed img:active { cursor: grabbing; }
+.igc-lightbox__title {
+  position: absolute; inset: 0 0 auto; z-index: 1; padding: 10px 60px;
+  color: var(--lightbox-titlebar-color, white); font-size: var(--font-ui-small, 13px);
+  text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  background: linear-gradient(rgba(0,0,0,.4), transparent); pointer-events: none;
+}
+.igc-lightbox > button {
+  position: absolute; z-index: 2; color: white; background: rgba(0,0,0,.25);
+}
+.igc-lightbox__close { top: 6px; right: 12px; }
+.igc-lightbox__prev { left: 12px; top: 50%; }
+.igc-lightbox__next { right: 12px; top: 50%; }
+.igc-lightbox > button:focus-visible { outline: 2px solid white; outline-offset: 2px; }

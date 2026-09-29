@@ -1,3 +1,9 @@
+# 0.3.0 (2026-09-29)
+
+- Live Preview: per-image zoom/edit actions with native-style translucent background.
+- Independent lightbox with keyboard navigation, zoom, pan, focus handling and teardown.
+- Preserve shared rendering and Reading View behavior.
+
 # Changelog
 
 ## 0.2.0 — 2026-09-26

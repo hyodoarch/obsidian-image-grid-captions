@@ -1,3 +1,7 @@
+# 0.3.0 verification (2026-09-29)
+
+Typecheck/build, 61 unit tests, 64 browser layout cases and controls browser tests passed. Controls tests cover two widths, per-image edit callbacks, zoom/pan, navigation, focus containment, close and cleanup. Native Obsidian editor reveal and desktop/mobile interaction remain unverified in the real app.
+
 # 検証記録
 
 ## 2026-09-26：0.2.0公開前検証

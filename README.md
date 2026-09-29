@@ -104,3 +104,16 @@ npm run test:browser
 ブラウザ検証はインストール済みMicrosoft Edgeを非表示で使います。別OSでは `test/browser.mjs` のPlaywright起動設定を変更してください。検証結果と未確認範囲は [TESTING.md](TESTING.md) を参照してください。
 
 公式APIの根拠: [Obsidian Markdown post processing](https://github.com/obsidianmd/obsidian-developer-docs/blob/main/en/Plugins/Editor/Markdown%20post%20processing.md)。
+
+## 0.3.0：ライブプレビューの画像操作
+
+各画像へのホバー（またはキーボードフォーカス）で、標準の色・半透明背景・アイコンを使った操作ボタンを表示します。
+
+- 拡大：その画像を暗い背景の中央に表示。同じグリッド内を左右ボタン／矢印キーで切り替え。
+- ホイール／＋・－で拡大縮小、ダブルクリックで拡大・リセット、拡大後はドラッグ移動。
+- Esc・右上の×・画像外の背景で閉じる。Tabキーのフォーカスは拡大画面内を循環。
+- 編集：標準のブロック編集を呼び出し、選択範囲が取得できる場合は対象画像のパスを選択。取得できない場合もブロック全体を編集できます。
+
+拡大表示は独自実装です。標準ビューアーの非公開APIは呼び出しません。ピンチ・慣性スクロール・終了アニメーション等を完全再現するものではありません。開始アニメーションは「動きを減らす」設定に従います。
+操作UIはObsidianのライブプレビュー専用です。Reading View・Digital Garden・Quartzの表示は変更しません。
+Obsidian実アプリでの最終操作確認は未実施です。更新後はImage Grid Captionsを再読み込みしてください。

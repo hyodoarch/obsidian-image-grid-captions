@@ -1,17 +1,22 @@
 {
   "name": "obsidian-image-grid-captions",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "license": "MIT",
-  "repository": { "type": "git", "url": "https://github.com/hyodoarch/obsidian-image-grid-captions.git" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hyodoarch/obsidian-image-grid-captions.git"
+  },
   "homepage": "https://github.com/hyodoarch/obsidian-image-grid-captions#readme",
-  "bugs": { "url": "https://github.com/hyodoarch/obsidian-image-grid-captions/issues" },
+  "bugs": {
+    "url": "https://github.com/hyodoarch/obsidian-image-grid-captions/issues"
+  },
   "scripts": {
     "build": "node build.mjs",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test test/*.test.ts",
-    "test:browser": "node test/browser.mjs",
+    "test:browser": "node test/browser.mjs && node test/controls-browser.mjs",
     "check": "npm run typecheck && npm run build && npm test"
   },
   "devDependencies": {
