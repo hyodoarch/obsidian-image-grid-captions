@@ -84,7 +84,7 @@ try {
   assert.equal(await page.locator('figcaption img, figcaption script').count(), 0);
   assert.equal(await page.locator('figcaption').count(), 3);
   assert.equal(await page.locator('figcaption').nth(2).textContent(), '## 記号のまま');
-  assert.equal(await page.locator('.image-grid-captions__image').first().getAttribute('alt'), '店舗入口 <img src=x onerror=alert(1)> 入口の説明文です。 二つ目の段落です。');
+  assert.equal(await page.locator('.image-grid-captions__image').first().getAttribute('alt'), '店舗入口 <img src=x onerror=alert(1)>');
   assert.equal(await page.locator('figcaption p').count(), 3);
   assert.equal(await page.locator('figcaption em').count(), 0);
   for (const width of [800, 320]) {
@@ -94,6 +94,20 @@ try {
     assert.equal(overflow, false, `caption heading overflow at ${width}px`);
     await page.screenshot({ path: `test-results/headings-${width}.png`, fullPage: true });
   }
+
+  await page.evaluate(() => {
+    window.cleanup();
+    const source = "columns: 2\n![[a.svg|++アイランド・キッチン]]\n![[b.svg|## 外観\n説明文]]";
+    const img = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200"/>');
+    window.cleanup = GridTest.mountGrid(GridTest.renderGrid(document.getElementById("host"), GridTest.parseGrid(source), [img, img]));
+  });
+  await page.waitForSelector('.image-grid-captions[data-ready]');
+  assert.equal(await page.locator('img').first().getAttribute('alt'), 'アイランド・キッチン');
+  assert.equal(await page.locator('img').nth(1).getAttribute('alt'), '外観');
+  assert.equal(await page.locator('figcaption').count(), 1);
+  assert.equal(await page.locator('figcaption').textContent(), '外観説明文');
+  assert.equal((await page.locator('#host').innerHTML()).includes('++'), false);
+
   assert.deepEqual(errors, []);
   const report = { passed: true, layoutCases: checked, checks: ["equal height", "aspect ratio", "gap", "one row", "resize", "caption wrapping", "light/dark screenshots", "narrow width recovery", "broken image isolation", "H2/H3 + paragraphs semantics and wrapping", "literal HTML and escaped headings", "captionless image"] };
   await writeFile("test-results/browser-report.json", JSON.stringify(report, null, 2));

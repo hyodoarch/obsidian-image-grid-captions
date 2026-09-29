@@ -35,7 +35,7 @@ test("multiline captions combine H2, H3 and paragraphs without changing grid par
     { text: "columns: 4", headingLevel: null },
     { text: "杉板張りです。", headingLevel: null },
   ]);
-  assert.equal(grid.images[0].alt, "外観 南側から見た建物です。 軒を深くしました。 材料 columns: 4 杉板張りです。");
+  assert.equal(grid.images[0].alt, "外観");
   assert.equal(grid.images[1].caption, "");
 });
 
@@ -50,3 +50,18 @@ for (const source of [
   "columns: 2\n![[a.jpg\n]]\n![[b.jpg]]",
   "columns: 2\n![[a.jpg|\n本文|追加\n]]\n![[b.jpg]]",
 ]) test(`reject malformed multiline caption ${JSON.stringify(source)}`, () => assert.throws(() => parseGrid(source)));
+
+test("alt-only and first-line Markdown extraction preserve visible captions", () => {
+  for (const [raw, alt, caption] of [
+    ["## アイランド・キッチン\n\n説明です。", "アイランド・キッチン", "## アイランド・キッチン\n\n説明です。"],
+    ["++アイランド・キッチン", "アイランド・キッチン", ""],
+    ["++", "", ""],
+    ["**外観** と `木材`\n説明", "外観 と 木材", "**外観** と `木材`\n説明"],
+    ["### [外観](https://example.com) & \"玄関\"", "外観 & \"玄関\"", "### [外観](https://example.com) & \"玄関\""],
+    ["価格 ++ 追加", "価格 ++ 追加", "価格 ++ 追加"],
+  ]) {
+    const image = parseGrid(`columns: 2\n![[a.jpg|${raw}]]\n![[b.jpg]]`).images[0];
+    assert.equal(image.alt, alt);
+    assert.equal(image.caption, caption);
+  }
+});

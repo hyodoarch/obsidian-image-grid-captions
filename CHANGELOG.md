@@ -1,3 +1,9 @@
+# 0.4.0 (2026-09-29)
+
+- Add leading `++` for alt-only images without captions.
+- Derive grid alt from the first caption line, removing Markdown markers.
+- Preserve existing visible captions, layout and controls.
+
 # 0.3.0 (2026-09-29)
 
 - Live Preview: per-image zoom/edit actions with native-style translucent background.
